@@ -16,5 +16,7 @@ def load_dataset():
     return dataset
 
 if __name__ == '__main__':
+    print('loading dataset ...')
     dataset = load_dataset()
+    print('dataset successfully loaded !!')
     print(dataset)
