@@ -1,5 +1,10 @@
+import configparser
 import subprocess
 import os
+
+# read config file to collect 
+config = configparser.ConfigParser()
+config.read('config.ini')
 
 os.chdir("/usr/local/etc/kafka/")
 subprocess.call("export CLASSPATH=/Users/max_sp/Downloads/kafka-connect-mqtt/target/kafka-connect-mqtt-1.1.0-package/kafka-connect-mqtt/*", shell=True)
@@ -23,7 +28,7 @@ print("... waiting for kafka-connector to be established ...")
 subprocess.call("sleep 5", shell=True)
 print("Successfully established kafka-mqtt-connector")
 
-nodes = ['1eb3','2a93','1538','24e1']
+nodes = config["ANCHORS_NAME"]["names"].split(",")
 
 for node in nodes:
     print(f"... waiting for anchor-{node}-connector to be established ...", end="  ")
