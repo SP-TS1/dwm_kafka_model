@@ -1,7 +1,7 @@
 import pandas as pd
 import argparse
 import uuid
-from utils import createConsumer, prepareDataRow
+from services.utils import createConsumer, prepareDataRow
 
 if __name__ == '__main__':
     # create parser to take true position as arguments from user
@@ -28,4 +28,4 @@ if __name__ == '__main__':
             break
 
     id = uuid.uuid4()
-    dataset.to_csv(f'./dataset/{id}.csv', index=False)
+    dataset.to_csv(f'./../dataset/{id}.csv', index=False)

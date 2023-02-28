@@ -42,7 +42,7 @@ def serializePayload(x, y, z):
 def createConsumer():
     return KafkaConsumer(
         KAFKA_TOPIC,
-        auto_offset_reset='latest',  # earliest
+        auto_offset_reset='latest',
         enable_auto_commit=True,
         bootstrap_servers=KAFKA_HOST
     )

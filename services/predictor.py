@@ -2,14 +2,14 @@ import joblib
 import pandas as pd
 from sklearn.pipeline import Pipeline
 
-from utils import PREDICT_TOPIC, calculate_ema, createConsumer, createProducer, prepareDataRow, serializePayload
+from services.utils import PREDICT_TOPIC, calculate_ema, createConsumer, createProducer, prepareDataRow, serializePayload
 
 
 if __name__ == '__main__':
     # load trained model
-    x_predictor: Pipeline = joblib.load("x_predictor.joblib")
-    y_predictor: Pipeline = joblib.load("y_predictor.joblib")
-    z_predictor: Pipeline = joblib.load("z_predictor.joblib")
+    x_predictor: Pipeline = joblib.load("./../trained_model/x_predictor.joblib")
+    y_predictor: Pipeline = joblib.load("./../trained_model/y_predictor.joblib")
+    z_predictor: Pipeline = joblib.load("./../trained_model/z_predictor.joblib")
 
     consumer = createConsumer()
     producer = createProducer()
