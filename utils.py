@@ -52,3 +52,39 @@ def createConsumer():
 
 def createProducer():
     return KafkaProducer(bootstrap_servers=KAFKA_HOST)
+
+
+# function to calculate ema for predicted value of each position
+
+N = 9 # EMA size
+K = 2/(N+1)
+INIT_X = 0
+INIT_Y = 0
+INIT_Z = 0
+prev_ema_x = 0
+prev_ema_y = 0
+prev_ema_z = 0
+
+
+def calculate_ema(value: float, position: str) -> float:
+    global INIT_X, INIT_Y, INIT_Z, prev_ema_x, prev_ema_y, prev_ema_z
+
+    if position == 'X' and INIT_X == 0:
+        INIT_X = value
+        prev_ema_x = value
+        return value
+    elif position == 'Y' and INIT_Y == 0:
+        INIT_Y = value
+        prev_ema_y = value
+        return value
+    elif position == 'Z' and INIT_Z == 0:
+        INIT_Z = value
+        prev_ema_z = value
+        return value
+    else:
+        if position == 'X':
+            return (value*K)+(prev_ema_x*(1-K))
+        if position == 'Y':
+            return (value*K)+(prev_ema_y*(1-K))
+        if position == 'Z':
+            return (value*K)+(prev_ema_z*(1-K))

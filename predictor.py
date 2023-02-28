@@ -2,10 +2,8 @@ import joblib
 import pandas as pd
 from sklearn.pipeline import Pipeline
 
-from utils import PREDICT_TOPIC, createConsumer, createProducer, prepareDataRow, serializePayload
+from utils import PREDICT_TOPIC, calculate_ema, createConsumer, createProducer, prepareDataRow, serializePayload
 
-def calculate_sma(pred_data: list[float]):
-    return (pred_data.sum())/len(pred_data)
 
 if __name__ == '__main__':
     # load trained model
@@ -21,29 +19,13 @@ if __name__ == '__main__':
         if 'NaN' in row.values():
             continue
         else:
-            # pred_x_list = []
-            # pred_y_list = []
-            # pred_z_list = []
-            # x_ema_list = []
-            # y_ema_list = []
-            # z_ema_list = []
-            # ema_size = 5
-
             data_row = pd.DataFrame.from_records([row])
             targets = ['true_x', 'true_y', 'true_z']
             X = data_row.drop(targets, axis=1)
-            pred_x = float(x_predictor.predict(X))
-            pred_y = float(y_predictor.predict(X))
-            pred_z = float(z_predictor.predict(X))
-
-            # pred_x_list.append(pred_x)
-            # pred_y_list.append(pred_y)
-            # pred_z_list.append(pred_z)
-            # if len(pred_x_list == ema_size):
-            #     sma = calculate_sma(pred_x_list)
-            #     x_ema_list.append()
-                
+            pred_x = calculate_ema(float(x_predictor.predict(X)), 'X')
+            pred_y = calculate_ema(float(y_predictor.predict(X)), 'Y')
+            pred_z = calculate_ema(float(z_predictor.predict(X)), 'Z')
 
             payload = serializePayload(pred_x, pred_y, pred_z)
-            print(f"{row['x']},{row['y']},{row['z']}","=>", payload)
+            print(f"{row['x']},{row['y']},{row['z']}", "=>", payload)
             producer.send(topic=PREDICT_TOPIC, value=payload)
