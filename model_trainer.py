@@ -29,9 +29,9 @@ def create_pipeline(preprocessor):
                ("classifier", LinearRegression())]
     )
 
-
 if __name__ == '__main__':
     dataset = load_dataset()
+    
     targets = ['true_x', 'true_y', 'true_z']
     X = dataset.drop(targets, axis=1)
 
