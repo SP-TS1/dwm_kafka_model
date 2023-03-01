@@ -1,3 +1,4 @@
+import os
 import pandas as pd
 import matplotlib.pyplot as plt
 from pathlib import Path
@@ -9,6 +10,7 @@ from sklearn.impute import SimpleImputer
 from sklearn.preprocessing import StandardScaler
 from sklearn.metrics import r2_score, mean_absolute_error, mean_absolute_percentage_error, mean_squared_error, max_error
 import joblib
+import imageio
 
 
 def load_dataset():
@@ -48,14 +50,14 @@ def report_result(target, y_test, y_pred, y_source):
     source_max = max_error(y_true=y_test, y_pred=y_source)
 
     data = {
-        'R_squared': [pred_r2, source_r2],
-        'MAE': [pred_mae, source_mae],
-        'MAPE': [pred_mape, source_mape],
-        'MSE': [pred_mse, source_mse],
-        'Max Error': [pred_max, source_max]
+        'R_squared': [pred_r2, source_r2, (pred_r2 - source_r2)/source_r2],
+        'MAE': [pred_mae, source_mae, (pred_mae - source_mae)/source_mae],
+        'MAPE': [pred_mape, source_mape, (pred_mape - source_mape)/source_mape],
+        'MSE': [pred_mse, source_mse, (pred_mse - source_mse)/source_mse],
+        'Max Error': [pred_max, source_max, (pred_max - source_max)/source_max]
     }
     report_df = pd.DataFrame.from_dict(data, orient='index', columns=[
-                                       f'{target[-1]}_predicted', f'{target[-1]}_source'])
+                                       f'{target[-1]}_predicted', f'{target[-1]}_source', 'diff percentage'])
     index_label = ['metrics']
     path = f'./../results/{target[-1]}_position.csv'
     report_df.to_csv(path, index_label=index_label)
@@ -75,13 +77,24 @@ def visualize_result(datadict):
     ax.set_ylabel('Y Position')
     ax.set_zlabel('Z Position')
     ax.legend()
-    for angle in range(0, 360):
+    for angle in range(0, 360, 2):
         ax.view_init(30, angle)
         plt.draw()
+        plt.savefig(f'./../results/img_{angle}.png',
+                    transparent=False,
+                    facecolor='white'
+                    )
         plt.pause(.001)
-    # path = f'./../results/3D_plot.png'
-    # plt.savefig(path, dpi=200)
     plt.close()
+
+    frames = []
+    for angle in range(0, 360, 2):
+        image = imageio.v2.imread(f'./../results/img_{angle}.png')
+        frames.append(image)
+    imageio.mimsave('./../results/visualize.gif', frames, fps=20)
+
+    for angle in range(0, 360, 2):
+        os.remove(f"./../results/img_{angle}.png")
 
 
 if __name__ == '__main__':
@@ -118,7 +131,8 @@ if __name__ == '__main__':
         datadict[f'{target[-1]}_true'] = y_test
         datadict[f'{target[-1]}_pred'] = y_pred
         datadict[f'{target[-1]}_source'] = y_source
-
+        print(f"generating report for {target[-1]} ...")
         report_result(target, y_test, y_pred, y_source)
 
+    print("generating testing result visualization ...")
     visualize_result(datadict)

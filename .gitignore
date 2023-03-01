@@ -1,3 +1,4 @@
-*csv
+/dataset/*csv
 *.pyc
 .DS_Store
+*.png
