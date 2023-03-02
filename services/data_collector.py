@@ -1,7 +1,7 @@
 import pandas as pd
 import argparse
 import uuid
-from services.utils import createConsumer, prepareDataRow
+from utils import createConsumer, prepareDataRow
 
 if __name__ == '__main__':
     # create parser to take true position as arguments from user
