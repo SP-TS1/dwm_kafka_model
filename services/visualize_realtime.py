@@ -72,9 +72,6 @@ def plot_subplot(ax, index_list, source_data, pred_data, true_data):
     axs[ax].plot(idx[pred_mask], pred_series[pred_mask], '.-',
                  label=f'predicted', color="orange", linewidth=0.5, alpha=0.8)
 
-    # true_data
-    # axs[ax].plot(idx, true_data[axis[ax]], 'b--', linewidth=0.5)
-
     axs[ax].set_xlabel("data length")
     axs[ax].set_ylabel(f"{axis[ax]} position")
 

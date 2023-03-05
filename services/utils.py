@@ -73,15 +73,12 @@ def calculate_ema(value: float, position: str) -> float:
     global INIT_X, INIT_Y, INIT_Z, prev_ema_x, prev_ema_y, prev_ema_z
 
     if position == 'X' and len(prev_ema_x) <= N:
-        # INIT_X = value
         prev_ema_x.append(value)
         return value
     if position == 'Y' and len(prev_ema_y) <= N:
-        # INIT_Y = value
         prev_ema_y.append(value)
         return value
     if position == 'Z' and len(prev_ema_z) <= N:
-        # INIT_Z = value
         prev_ema_z.append(value)
         return value
     else:
