@@ -2,6 +2,7 @@ import configparser
 import json
 
 from kafka import KafkaConsumer, KafkaProducer
+from numpy import mean
 
 # read config file
 config = configparser.ConfigParser()
@@ -11,6 +12,7 @@ KAFKA_HOST = config["CONNECTION"]["KAFKA_HOST"]
 KAFKA_TOPIC = config["CONNECTION"]["KAFKA_TOPIC"]
 PREDICT_TOPIC = config["CONNECTION"]["PREDICT_TOPIC"]
 JSON_FIELDS = config["CONNECTION"]["JSON_FIELDS"].split(",")
+ANCHORS_NAME = config["ANCHORS_NAME"]["names"].split(",")
 
 # function to parse json from Kafka stream and add node position
 # from config file then convert to dataframe row
@@ -32,8 +34,9 @@ def prepareDataRow(msg) -> dict:
 # function to turn predicted positions to json payload
 
 
-def serializePayload(x, y, z):
-    message = {"x": x, "y": y, "z": z}
+def serializePayload(x, y, z, tagName):
+    tag = {"name": tagName, "x": x, "y": y, "z": z}
+    message = {"tags": [tag]}
     return json.dumps(message).encode('utf-8')
 
 # initialize Kafka consumer with predefined config
@@ -56,35 +59,41 @@ def createProducer():
 
 # function to calculate ema for predicted value of each position
 
-N = 9 # EMA size
+N = 9  # EMA size
 K = 2/(N+1)
 INIT_X = 0
 INIT_Y = 0
 INIT_Z = 0
-prev_ema_x = 0
-prev_ema_y = 0
-prev_ema_z = 0
+prev_ema_x = []
+prev_ema_y = []
+prev_ema_z = []
 
 
 def calculate_ema(value: float, position: str) -> float:
     global INIT_X, INIT_Y, INIT_Z, prev_ema_x, prev_ema_y, prev_ema_z
 
-    if position == 'X' and INIT_X == 0:
-        INIT_X = value
-        prev_ema_x = value
+    if position == 'X' and len(prev_ema_x) <= N:
+        # INIT_X = value
+        prev_ema_x.append(value)
         return value
-    elif position == 'Y' and INIT_Y == 0:
-        INIT_Y = value
-        prev_ema_y = value
+    if position == 'Y' and len(prev_ema_y) <= N:
+        # INIT_Y = value
+        prev_ema_y.append(value)
         return value
-    elif position == 'Z' and INIT_Z == 0:
-        INIT_Z = value
-        prev_ema_z = value
+    if position == 'Z' and len(prev_ema_z) <= N:
+        # INIT_Z = value
+        prev_ema_z.append(value)
         return value
     else:
         if position == 'X':
-            return (value*K)+(prev_ema_x*(1-K))
+            prev_ema_x.append(value)
+            prev_ema_x.pop(0)
+            return mean(prev_ema_x)
         if position == 'Y':
-            return (value*K)+(prev_ema_y*(1-K))
+            prev_ema_y.append(value)
+            prev_ema_y.pop(0)
+            return mean(prev_ema_y)
         if position == 'Z':
-            return (value*K)+(prev_ema_z*(1-K))
+            prev_ema_z.append(value)
+            prev_ema_z.pop(0)
+            return mean(prev_ema_z)

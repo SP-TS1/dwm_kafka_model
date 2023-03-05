@@ -36,25 +36,26 @@ def create_pipeline(preprocessor):
 
 def report_result(target, y_test, y_pred, y_source):
 
-    pred_r2 = r2_score(y_true=y_test, y_pred=y_pred)
-    pred_mae = mean_absolute_error(y_true=y_test, y_pred=y_pred)
-    pred_mape = mean_absolute_percentage_error(y_true=y_test, y_pred=y_pred)
-    pred_mse = mean_squared_error(y_true=y_test, y_pred=y_pred)
-    pred_max = max_error(y_true=y_test, y_pred=y_pred)
+    pred_r2 = round(r2_score(y_true=y_test, y_pred=y_pred), 3)
+    pred_mae = round(mean_absolute_error(y_true=y_test, y_pred=y_pred), 3)
+    pred_mape = round(mean_absolute_percentage_error(
+        y_true=y_test, y_pred=y_pred), 3)
+    pred_mse = round(mean_squared_error(y_true=y_test, y_pred=y_pred), 3)
+    pred_max = round(max_error(y_true=y_test, y_pred=y_pred), 3)
 
-    source_r2 = r2_score(y_true=y_test, y_pred=y_source)
-    source_mae = mean_absolute_error(y_true=y_test, y_pred=y_source)
-    source_mape = mean_absolute_percentage_error(
-        y_true=y_test, y_pred=y_source)
-    source_mse = mean_squared_error(y_true=y_test, y_pred=y_source)
-    source_max = max_error(y_true=y_test, y_pred=y_source)
+    source_r2 = round(r2_score(y_true=y_test, y_pred=y_source), 3)
+    source_mae = round(mean_absolute_error(y_true=y_test, y_pred=y_source), 3)
+    source_mape = round(mean_absolute_percentage_error(
+        y_true=y_test, y_pred=y_source), 3)
+    source_mse = round(mean_squared_error(y_true=y_test, y_pred=y_source), 3)
+    source_max = round(max_error(y_true=y_test, y_pred=y_source), 3)
 
     data = {
-        'R_squared': [pred_r2, source_r2, (pred_r2 - source_r2)/source_r2],
-        'MAE': [pred_mae, source_mae, (pred_mae - source_mae)/source_mae],
-        'MAPE': [pred_mape, source_mape, (pred_mape - source_mape)/source_mape],
-        'MSE': [pred_mse, source_mse, (pred_mse - source_mse)/source_mse],
-        'Max Error': [pred_max, source_max, (pred_max - source_max)/source_max]
+        'R_squared': [pred_r2, source_r2, round((pred_r2 - source_r2)/source_r2 * 100, 3)],
+        'MAE': [pred_mae, source_mae, round((pred_mae - source_mae)/source_mae * 100, 3)],
+        'MAPE': [pred_mape, source_mape, round((pred_mape - source_mape)/source_mape * 100, 3)],
+        'MSE': [pred_mse, source_mse, round((pred_mse - source_mse)/source_mse * 100, 3)],
+        'Max Error': [pred_max, source_max, round((pred_max - source_max)/source_max * 100, 3)]
     }
     report_df = pd.DataFrame.from_dict(data, orient='index', columns=[
                                        f'{target[-1]}_predicted', f'{target[-1]}_source', 'diff percentage'])
