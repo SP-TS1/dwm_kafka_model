@@ -1,8 +1,6 @@
 
 import json
-from random import random, randrange
 import numpy as np
-import pandas as pd
 from kafka import KafkaConsumer
 from sklearn.metrics import mean_absolute_error
 from utils import KAFKA_HOST
@@ -67,10 +65,10 @@ def plot_subplot(ax, index_list, source_data, pred_data, true_data):
 
     # source
     axs[ax].plot(idx[source_mask], source_series[source_mask], 'g.-',
-                 label=f'source', linewidth=0.5, alpha=0.5)
+                 label=f'source [MAE={source_mae}]', linewidth=0.5, alpha=0.5)
     # predicted
     axs[ax].plot(idx[pred_mask], pred_series[pred_mask], '.-',
-                 label=f'predicted', color="orange", linewidth=0.5, alpha=0.8)
+                 label=f'predicted [MAE={pred_mae}]', color="orange", linewidth=0.5, alpha=0.8)
 
     axs[ax].set_xlabel("data length")
     axs[ax].set_ylabel(f"{axis[ax]} position")

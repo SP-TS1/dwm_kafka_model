@@ -118,7 +118,7 @@ if __name__ == '__main__':
     for target in targets:
         y = dataset[target]
         X_train, X_test, y_train, y_test = train_test_split(
-            X, y, test_size=0.6, random_state=99)
+            X, y, test_size=0.8, random_state=99)
         pipe = create_pipeline(preprocessor)
         pipe.fit(X_train, y_train)
         model_name = f"{target[-1]}_predictor.joblib"

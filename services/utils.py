@@ -64,33 +64,33 @@ K = 2/(N+1)
 INIT_X = 0
 INIT_Y = 0
 INIT_Z = 0
-prev_ema_x = []
-prev_ema_y = []
-prev_ema_z = []
+prev_sma_x = []
+prev_sma_y = []
+prev_sma_z = []
 
 
-def calculate_ema(value: float, position: str) -> float:
-    global INIT_X, INIT_Y, INIT_Z, prev_ema_x, prev_ema_y, prev_ema_z
+def calculate_sma(value: float, position: str) -> float:
+    global INIT_X, INIT_Y, INIT_Z, prev_sma_x, prev_sma_y, prev_sma_z
 
-    if position == 'X' and len(prev_ema_x) <= N:
-        prev_ema_x.append(value)
+    if position == 'X' and len(prev_sma_x) <= N:
+        prev_sma_x.append(value)
         return value
-    if position == 'Y' and len(prev_ema_y) <= N:
-        prev_ema_y.append(value)
+    if position == 'Y' and len(prev_sma_y) <= N:
+        prev_sma_y.append(value)
         return value
-    if position == 'Z' and len(prev_ema_z) <= N:
-        prev_ema_z.append(value)
+    if position == 'Z' and len(prev_sma_z) <= N:
+        prev_sma_z.append(value)
         return value
     else:
         if position == 'X':
-            prev_ema_x.append(value)
-            prev_ema_x.pop(0)
-            return mean(prev_ema_x)
+            prev_sma_x.append(value)
+            prev_sma_x.pop(0)
+            return mean(prev_sma_x)
         if position == 'Y':
-            prev_ema_y.append(value)
-            prev_ema_y.pop(0)
-            return mean(prev_ema_y)
+            prev_sma_y.append(value)
+            prev_sma_y.pop(0)
+            return mean(prev_sma_y)
         if position == 'Z':
-            prev_ema_z.append(value)
-            prev_ema_z.pop(0)
-            return mean(prev_ema_z)
+            prev_sma_z.append(value)
+            prev_sma_z.pop(0)
+            return mean(prev_sma_z)
