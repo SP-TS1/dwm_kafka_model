@@ -3,7 +3,7 @@ import pandas as pd
 import matplotlib.pyplot as plt
 from pathlib import Path
 from sklearn.compose import ColumnTransformer
-from sklearn.linear_model import LinearRegression
+from sklearn.linear_model import LinearRegression, Ridge, Lasso
 from sklearn.model_selection import train_test_split
 from sklearn.pipeline import Pipeline
 from sklearn.impute import SimpleImputer
@@ -26,11 +26,15 @@ def load_dataset():
     return dataset
 
 
-def create_pipeline(preprocessor):
-    # function to generate pipeline for each X,Y,Z
+def create_pipeline(preprocessor, model):
+    # function to generate pipeline for each X,Y,Z in each selected model
+    models = {"LinearRegression": LinearRegression(),
+              "Ridge": Ridge(),
+              "Lasso": Lasso(alpha=0.1)}
+
     return Pipeline(
         steps=[("preprocessor", preprocessor),
-               ("classifier", LinearRegression())]
+               ("classifier", models[model])]
     )
 
 
@@ -60,11 +64,11 @@ def report_result(target, y_test, y_pred, y_source):
     report_df = pd.DataFrame.from_dict(data, orient='index', columns=[
                                        f'{target[-1]}_predicted', f'{target[-1]}_source', 'diff percentage'])
     index_label = ['metrics']
-    path = f'./../results/{target[-1]}_position.csv'
+    path = f'./../results/{model}/{target[-1]}_position.csv'
     report_df.to_csv(path, index_label=index_label)
 
 
-def visualize_result(datadict):
+def visualize_result(datadict, model):
     fig = plt.figure()
     ax = fig.add_subplot(projection='3d')
 
@@ -81,7 +85,8 @@ def visualize_result(datadict):
     for angle in range(0, 360, 2):
         ax.view_init(30, angle)
         plt.draw()
-        plt.savefig(f'./../results/img_{angle}.png',
+        plt.title(f"{model} Result")
+        plt.savefig(f'./../results/{model}/img_{angle}.png',
                     transparent=False,
                     facecolor='white'
                     )
@@ -90,12 +95,13 @@ def visualize_result(datadict):
 
     frames = []
     for angle in range(0, 360, 2):
-        image = imageio.v2.imread(f'./../results/img_{angle}.png')
+        image = imageio.v2.imread(f'./../results/{model}/img_{angle}.png')
         frames.append(image)
-    imageio.mimsave('./../results/visualize.gif', frames, fps=20)
+    imageio.mimsave(f'./../results/{model}/visualize.gif', frames, fps=20)
 
     for angle in range(0, 360, 2):
-        os.remove(f"./../results/img_{angle}.png")
+        if angle != 120:
+            os.remove(f"./../results/{model}/img_{angle}.png")
 
 
 if __name__ == '__main__':
@@ -103,6 +109,8 @@ if __name__ == '__main__':
 
     targets = ['true_x', 'true_y', 'true_z']
     X = dataset.drop(targets, axis=1)
+
+    models = ['LinearRegression', 'Ridge', 'Lasso']
 
     numeric_features = list(X.columns)
     numeric_transformer = Pipeline(
@@ -115,25 +123,26 @@ if __name__ == '__main__':
 
     datadict = {}
 
-    for target in targets:
-        y = dataset[target]
-        X_train, X_test, y_train, y_test = train_test_split(
-            X, y, test_size=0.8, random_state=99)
-        pipe = create_pipeline(preprocessor)
-        pipe.fit(X_train, y_train)
-        model_name = f"{target[-1]}_predictor.joblib"
-        path = f"./../trained_model/{model_name}"
-        joblib.dump(pipe, path)
-        print(f"{model_name} is stored !!!")
+    for model in models:
+        for target in targets:
+            y = dataset[target]
+            X_train, X_test, y_train, y_test = train_test_split(
+                X, y, test_size=0.8, random_state=99)
+            pipeline = create_pipeline(preprocessor, model)
+            pipeline.fit(X_train, y_train)
+            trained_model_name = f"{target[-1]}_predictor.joblib"
+            path = f"./../trained_model/{model}/{trained_model_name}"
+            joblib.dump(pipeline, path)
+            print(f"{trained_model_name} is stored !!!")
 
-        y_pred = pipe.predict(X_test)
-        y_source = X_test[f'{target[-1]}']
+            y_pred = pipeline.predict(X_test)
+            y_source = X_test[f'{target[-1]}']
 
-        datadict[f'{target[-1]}_true'] = y_test
-        datadict[f'{target[-1]}_pred'] = y_pred
-        datadict[f'{target[-1]}_source'] = y_source
-        print(f"generating report for {target[-1]} ...")
-        report_result(target, y_test, y_pred, y_source)
+            datadict[f'{target[-1]}_true'] = y_test
+            datadict[f'{target[-1]}_pred'] = y_pred
+            datadict[f'{target[-1]}_source'] = y_source
+            print(f"generating report for {target[-1]} ...")
+            report_result(target, y_test, y_pred, y_source)
 
-    print("generating testing result visualization ...")
-    visualize_result(datadict)
+        print(f"generating testing result visualization for {model} ...\n")
+        visualize_result(datadict, model)

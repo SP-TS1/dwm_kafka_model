@@ -1,0 +1,6 @@
+metrics,z_predicted,z_source,diff percentage
+R_squared,-0.001,-32.972,-99.997
+MAE,0.02,0.262,-92.366
+MAPE,0.022,0.315,-93.016
+MSE,0.003,0.092,-96.739
+Max Error,0.271,1.253,-78.372

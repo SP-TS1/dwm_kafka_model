@@ -1,6 +1,0 @@
-metrics,x_predicted,x_source,diff percentage
-R_squared,0.998,0.998,0.0
-MAE,0.048,0.051,-5.882
-MAPE,0.024,0.025,-4.0
-MSE,0.004,0.005,-20.0
-Max Error,0.345,0.31,11.29

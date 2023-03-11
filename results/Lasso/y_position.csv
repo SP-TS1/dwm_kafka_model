@@ -1,0 +1,6 @@
+metrics,y_predicted,y_source,diff percentage
+R_squared,0.995,0.998,-0.301
+MAE,0.102,0.054,88.889
+MAPE,0.046,0.024,91.667
+MSE,0.014,0.006,133.333
+Max Error,0.329,0.341,-3.519

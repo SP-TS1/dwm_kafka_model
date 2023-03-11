@@ -9,12 +9,13 @@ from utils import PREDICT_TOPIC, createConsumer, createProducer, prepareDataRow,
 
 if __name__ == '__main__':
     # load trained model
+    model = 'LinearRegression'
     x_predictor: Pipeline = joblib.load(
-        "./../trained_model/x_predictor.joblib")
+        f"./../trained_model/{model}/x_predictor.joblib")
     y_predictor: Pipeline = joblib.load(
-        "./../trained_model/y_predictor.joblib")
+        f"./../trained_model/{model}/y_predictor.joblib")
     z_predictor: Pipeline = joblib.load(
-        "./../trained_model/z_predictor.joblib")
+        f"./../trained_model/{model}/z_predictor.joblib")
 
     consumer = createConsumer()
     producer = createProducer()
