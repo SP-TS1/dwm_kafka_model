@@ -32,4 +32,5 @@
 4. to measure model's accuracy, setup known true position and run `visualize_realtime.py`
 
 ### Example `visualize_realtime`
+In this test, we assign true position (X, Y, Z) equal to (4.10, 4.50, 0.80) in meter
 > ![result_scene_1](https://user-images.githubusercontent.com/68238844/229591681-da78109a-bc72-4441-bfdc-414a9411470a.gif)
