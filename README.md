@@ -30,3 +30,6 @@
 2. configure the connection configuration eg. topic name, prediction topic name, tag and anchors name etc.
 3. run `predictor.py` to predict true positions
 4. to measure model's accuracy, setup known true position and run `visualize_realtime.py`
+
+### Example `visualize_realtime`
+> ![result_scene_1](https://user-images.githubusercontent.com/68238844/229591681-da78109a-bc72-4441-bfdc-414a9411470a.gif)
