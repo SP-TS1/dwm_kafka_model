@@ -1,6 +1,12 @@
 # dwm_kafka_model
 > A major limitation is that the model is *specific* to the environment in which the raw data is collected. Therefore, it is necessary to retrain the model every time the conditions change.
 
+## System Overview
+### Training phase
+> ![image](https://user-images.githubusercontent.com/68238844/229580987-10a73a96-2b7a-4446-91c6-01e7e5e44ae3.png)
+### Production phase
+> ![image](https://user-images.githubusercontent.com/68238844/229581080-cf4779bb-7c69-4b45-b880-6c4b25bc965d.png)
+
 
 ## Services
 * data_collector : collect samples with specified number of samples.
